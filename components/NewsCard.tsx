@@ -4,13 +4,10 @@ import { format } from 'date-fns';
 import { Article } from '../types';
 
 const categoryColors: Record<string, string> = {
+  Original: 'bg-amber-500 text-black font-bold',
   Crime: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
   Politics: 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300',
-  Business: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
-  Education: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
-  Sports: 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300',
-  Health: 'bg-pink-100 text-pink-700 dark:bg-pink-900 dark:text-pink-300',
-  Weather: 'bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-300',
+  // ... other categories
   General: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
 };
 
@@ -21,17 +18,35 @@ export default function NewsCard({
   article: Article; 
   onHide: (link: string) => void;
 }) {
+  const isOriginal = article.source === "Augly Original";
+
   return (
-    <div className="relative bg-white dark:bg-gray-900 rounded-xl shadow-sm hover:shadow-md transition-all border border-gray-200 dark:border-gray-800 overflow-hidden group">
-      <button onClick={(e) => { e.preventDefault(); onHide(article.link); }}
-        className="absolute top-3 right-3 z-10 bg-white/90 dark:bg-gray-900/90 hover:bg-white dark:hover:bg-gray-800 text-gray-500 hover:text-red-600 p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-all">
+    <div className={`relative rounded-2xl shadow-sm hover:shadow-md transition-all border overflow-hidden group
+      ${isOriginal 
+        ? 'border-amber-500 bg-gradient-to-br from-gray-900 to-gray-950 ring-1 ring-amber-500/30' 
+        : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800'}`}>
+
+      {isOriginal && (
+        <div className="absolute top-3 left-3 z-20 bg-amber-500 text-black text-xs font-bold px-3 py-1 rounded-full">
+          ORIGINAL
+        </div>
+      )}
+
+      <button
+        onClick={(e) => { e.preventDefault(); onHide(article.link); }}
+        className="absolute top-3 right-3 z-20 bg-black/70 hover:bg-black text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-all"
+      >
         <X className="w-4 h-4" />
       </button>
 
       <a href={article.link} target="_blank" rel="noopener noreferrer">
         {article.image && (
-          <div className="h-48 overflow-hidden">
-            <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+          <div className="h-52 overflow-hidden">
+            <img 
+              src={article.image} 
+              alt={article.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
           </div>
         )}
 
@@ -43,17 +58,18 @@ export default function NewsCard({
             <span className="text-xs text-gray-500 dark:text-gray-400">{article.source}</span>
           </div>
 
-          <h3 className="font-semibold text-lg leading-tight mb-3 text-gray-900 dark:text-white line-clamp-3">
+          <h3 className={`font-semibold text-xl leading-tight mb-3 line-clamp-3
+            ${isOriginal ? 'text-amber-300' : 'text-white'}`}>
             {article.title}
           </h3>
 
           {article.description && (
-            <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-3 mb-4">
+            <p className="text-gray-400 text-sm line-clamp-4 mb-4">
               {article.description}
             </p>
           )}
 
-          <div className="text-blue-600 dark:text-blue-500 text-sm flex items-center gap-1">
+          <div className="text-blue-500 text-sm flex items-center gap-1 font-medium">
             Read full story <ExternalLink className="w-4 h-4" />
           </div>
         </div>

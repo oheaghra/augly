@@ -2,17 +2,21 @@
 import { fetchAugustaNews } from '../lib/rss';
 import ClientNewsWrapper from './ClientNewsWrapper';
 import { Article } from '../types';
+import { originalArticles } from '../data/originalArticles';
 
 export const revalidate = 1800;
 
 export default async function Home() {
-  let articles: Article[] = [];
+  let rssArticles: Article[] = [];
 
   try {
-    articles = await fetchAugustaNews();
+    rssArticles = await fetchAugustaNews();
   } catch (error) {
     console.error("Failed to fetch news:", error);
   }
+
+  // Original stories appear first
+  const allArticles = [...originalArticles, ...rssArticles];
 
   return (
     <main className="min-h-screen bg-gray-950 text-white">
@@ -27,7 +31,7 @@ export default async function Home() {
         </div>
       </header>
 
-      <ClientNewsWrapper initialArticles={articles} />
+      <ClientNewsWrapper initialArticles={allArticles} />
     </main>
   );
 }
