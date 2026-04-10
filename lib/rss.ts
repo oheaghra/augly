@@ -1,6 +1,7 @@
 // lib/rss.ts
 import Parser from 'rss-parser';
 import { Article } from '../types';
+import { rewriteHeadline } from '../data/customHeadlines';
 
 const parser = new Parser({
   customFields: { item: ['media:content', 'media:thumbnail', 'enclosure'] }
@@ -17,13 +18,22 @@ const feeds = [
 
 const categorize = (title: string, description: string = ''): string => {
   const text = (title + ' ' + description).toLowerCase();
-  if (text.includes('crime') || text.includes('police') || text.includes('arrest') || text.includes('shooting')) return 'Crime';
-  if (text.includes('election') || text.includes('council') || text.includes('mayor')) return 'Politics';
-  if (text.includes('business') || text.includes('company') || text.includes('economy')) return 'Business';
-  if (text.includes('school') || text.includes('education')) return 'Education';
-  if (text.includes('sport') || text.includes('football') || text.includes('basketball')) return 'Sports';
-  if (text.includes('health') || text.includes('hospital')) return 'Health';
-  if (text.includes('weather')) return 'Weather';
+
+  if (text.includes('crime') || text.includes('police') || text.includes('arrest') || text.includes('shooting') || text.includes('murder')) 
+    return 'Crime';
+  if (text.includes('election') || text.includes('council') || text.includes('commission') || text.includes('mayor') || text.includes('legislat')) 
+    return 'Politics';
+  if (text.includes('business') || text.includes('company') || text.includes('economy') || text.includes('jobs')) 
+    return 'Business';
+  if (text.includes('school') || text.includes('education') || text.includes('teacher') || text.includes('student')) 
+    return 'Education';
+  if (text.includes('sport') || text.includes('football') || text.includes('basketball') || text.includes('baseball')) 
+    return 'Sports';
+  if (text.includes('health') || text.includes('hospital')) 
+    return 'Health';
+  if (text.includes('weather') || text.includes('storm') || text.includes('rain')) 
+    return 'Weather';
+
   return 'General';
 };
 
@@ -34,8 +44,8 @@ export async function fetchAugustaNews(): Promise<Article[]> {
     try {
       const feedData = await parser.parseURL(feed.url);
       
-      const articles = feedData.items.map((item: any) => ({   // ← 'any' to avoid strict typing issues
-        title: item.title?.trim() || 'No Title',
+      const articles = feedData.items.map((item: any) => ({
+        title: rewriteHeadline(item.title?.trim() || 'No Title'),   // ← Uses your custom headlines
         link: item.link || '#',
         pubDate: item.pubDate || new Date().toISOString(),
         source: feed.name,
@@ -55,13 +65,19 @@ export async function fetchAugustaNews(): Promise<Article[]> {
     }
   }
 
-  allArticles.sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
+  // Sort newest first
+  allArticles.sort((a, b) => 
+    new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()
+  );
 
+  // Remove duplicates
   const seen = new Set();
-  return allArticles.filter(article => {
+  const uniqueArticles = allArticles.filter(article => {
     const key = `${article.title}-${article.source}`;
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
-  }).slice(0, 60);
+  });
+
+  return uniqueArticles.slice(0, 60);
 }
