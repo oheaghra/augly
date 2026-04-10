@@ -3,7 +3,7 @@ import { Article } from '../types';
 
 export const originalArticles: Article[] = [
   {
-    title: "CSRA Residents Brace for Major Property Tax Increase",
+    title: "Phinizy Swamp welcomes Spring",
     link: "https://docs.google.com/document/d/1gYBJ7rsRIUZLabANqzT1ATYv0h0xAEzWOV6RFYFF5ag/edit?usp=sharing",   // ← Paste your Google Docs link here
     pubDate: "2026-04-09",
     source: "Augly Original",
