@@ -5,9 +5,7 @@ export const customHeadlines: Record<string, string> = {
   
   "Richmond County considers big tax hike": "CSRA Homeowners Could See 18% Property Tax Increase Next Year",
   "Augusta Commissioners vote on new budget": "Augusta City Commission Just Approved a Controversial New Budget",
-  "First Tee Augusta girls experience the magic of The Masters": "Girls annoy golfers",
- "Patrons share their favorite hole at Augusta National": "This has been censored",
-
+  
   // Add more as you go...
 };
 
