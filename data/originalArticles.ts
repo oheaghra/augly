@@ -3,13 +3,12 @@ import { Article } from '../types';
 
 export const originalArticles: Article[] = [
   {
-    title: "Put Your First Original Story Title Here",
-    link: "https://example.com/your-article-link",   // Change this
+    title: "CSRA Residents Brace for Major Property Tax Increase",
+    link: "https://docs.google.com/document/d/1gYBJ7rsRIUZLabANqzT1ATYv0h0xAEzWOV6RFYFF5ag/edit?usp=sharing",   // ← Paste your Google Docs link here
     pubDate: "2026-04-09",
     source: "Augly Original",
-    description: "Write a strong 2-3 sentence summary here. This will show under the headline.",
-    image: "https://picsum.photos/id/1015/1200/630",   // Replace with real image
-    category: "Original",
+    description: "Phinizy Swamp gets busy",
+    // image: "https://picsum.photos/id/1015/1200/630",   // Change this to a real image later
+    category: "Politics",
   },
-  // Add new stories here (newest on top)
 ];
