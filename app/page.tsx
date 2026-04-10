@@ -15,9 +15,6 @@ export default async function Home() {
     console.error("Failed to fetch news:", error);
   }
 
-  // Original stories appear first
-  const allArticles = [...originalArticles, ...rssArticles];
-
   return (
     <main className="min-h-screen bg-gray-950 text-white">
       <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
@@ -31,7 +28,10 @@ export default async function Home() {
         </div>
       </header>
 
-      <ClientNewsWrapper initialArticles={allArticles} />
+      <ClientNewsWrapper 
+        originalArticles={originalArticles}
+        rssArticles={rssArticles}
+      />
     </main>
   );
 }
