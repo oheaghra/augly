@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import NewsCard from '../components/NewsCard';
 import { Article } from '../types';
 import { Search } from 'lucide-react';
+import { isPromoted } from '../data/promotedArticles';
 
 export default function ClientNewsWrapper({
   originalArticles,
@@ -29,13 +30,22 @@ export default function ClientNewsWrapper({
 
   const allArticles = [...originalArticles, ...rssArticles];
 
-  const visibleArticles = allArticles.filter(article => 
+  // Sort: Promoted + Originals first, then the rest
+  const sortedArticles = [...allArticles].sort((a, b) => {
+    const aPromoted = isPromoted(a.link) || a.source === "Augly Original";
+    const bPromoted = isPromoted(b.link) || b.source === "Augly Original";
+    
+    if (aPromoted && !bPromoted) return -1;
+    if (!aPromoted && bPromoted) return 1;
+    return 0;
+  });
+
+  const visibleArticles = sortedArticles.filter(article => 
     !hiddenArticles.includes(article.link)
   );
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-8">
-      {/* Search Bar */}
       <div className="max-w-2xl mx-auto mb-10">
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -49,7 +59,6 @@ export default function ClientNewsWrapper({
         </div>
       </div>
 
-      {/* Main Content Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {visibleArticles.map((article, index) => (
           <NewsCard 
@@ -57,16 +66,10 @@ export default function ClientNewsWrapper({
             article={article} 
             onHide={hideArticle}
             featured={article.source === "Augly Original" && index === 0}
-            headlineOnly={index >= 9}     // ← After 9 cards, show only headlines
+            headlineOnly={index >= 9}           // First 9 = full cards
           />
         ))}
       </div>
-
-      {visibleArticles.length === 0 && (
-        <p className="text-center text-xl text-gray-500 py-20">
-          No articles available
-        </p>
-      )}
     </div>
   );
 }
