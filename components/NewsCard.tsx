@@ -15,47 +15,13 @@ const categoryColors: Record<string, string> = {
 export default function NewsCard({ 
   article, 
   onHide,
-  featured = false,
-  compact = false
+  featured = false
 }: { 
   article: Article; 
   onHide: (link: string) => void;
   featured?: boolean;
-  compact?: boolean;
 }) {
   const isOriginal = article.source === "Augly Original";
-
-  if (compact) {
-    return (
-      <a 
-        href={article.link} 
-        target="_blank" 
-        rel="noopener noreferrer"
-        className="block bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-xl p-4 transition-all group"
-      >
-        <div className="flex gap-3">
-          {article.image && (
-            <img 
-              src={article.image} 
-              alt={article.title}
-              className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
-            />
-          )}
-          <div className="flex-1 min-w-0">
-            {isOriginal && (
-              <span className="text-amber-500 text-xs font-bold">AUGLY ORIGINAL</span>
-            )}
-            <h3 className="font-semibold text-base leading-tight line-clamp-3 mt-1 group-hover:text-blue-400 transition-colors">
-              {article.title}
-            </h3>
-            <p className="text-xs text-gray-500 mt-2">
-              {format(new Date(article.pubDate), 'MMM d')}
-            </p>
-          </div>
-        </div>
-      </a>
-    );
-  }
 
   return (
     <div className={`relative rounded-2xl overflow-hidden border group transition-all
@@ -71,7 +37,7 @@ export default function NewsCard({
         <X className="w-4 h-4" />
       </button>
 
-      <a href={article.link} target="_blank" rel="noopener noreferrer">
+      <a href={article.link} target="_blank" rel="noopener noreferrer" className="block h-full">
         {article.image && (
           <div className={`overflow-hidden ${featured ? 'h-80' : 'h-52'}`}>
             <img 
@@ -82,13 +48,14 @@ export default function NewsCard({
           </div>
         )}
 
-        <div className={`p-6 ${featured ? 'pt-8' : ''}`}>
+        <div className={`p-6 ${featured ? 'pt-8' : 'pt-6'}`}>
           <div className="flex items-center justify-between mb-4">
             <span className={`text-xs px-4 py-1.5 rounded-full font-medium ${categoryColors[article.category || 'General']}`}>
               {article.category}
             </span>
-            {isOriginal && !featured && (
-              <span className="text-amber-500 text-xs font-bold">ORIGINAL</span>
+            
+            {isOriginal && (
+              <span className="text-amber-500 text-xs font-bold tracking-wider">AUGLY ORIGINAL</span>
             )}
           </div>
 
@@ -109,7 +76,7 @@ export default function NewsCard({
               {format(new Date(article.pubDate), 'MMMM d, yyyy')}
             </div>
             <div className="text-blue-500 flex items-center gap-1 font-medium">
-              Read full story <ExternalLink className="w-4 h-4" />
+              Read full <ExternalLink className="w-4 h-4" />
             </div>
           </div>
         </div>
