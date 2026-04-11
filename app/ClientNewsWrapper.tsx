@@ -1,7 +1,7 @@
 // app/ClientNewsWrapper.tsx
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import NewsCard from '../components/NewsCard';
 import { Article } from '../types';
 import { Search } from 'lucide-react';
@@ -30,6 +30,9 @@ export default function ClientNewsWrapper({
   const visibleOriginals = originalArticles.filter(a => !hiddenArticles.includes(a.link));
   const visibleRSS = rssArticles.filter(a => !hiddenArticles.includes(a.link));
 
+  const featured = visibleOriginals[0];
+  const otherOriginals = visibleOriginals.slice(1);
+
   return (
     <div className="max-w-6xl mx-auto px-6 py-8">
       {/* Search Bar */}
@@ -46,36 +49,57 @@ export default function ClientNewsWrapper({
         </div>
       </div>
 
-      {/* === AUGLY ORIGINALS SECTION === */}
-      <div className="mb-12">
-        <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
-          <span className="text-amber-500">★</span> Augly Originals
-        </h2>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        {/* LEFT COLUMN - Augly Originals */}
+        <div className="lg:col-span-5 space-y-8">
+          <h2 className="text-3xl font-bold flex items-center gap-3">
+            <span className="text-amber-500">★</span> Augly Originals
+          </h2>
 
-        {/* Featured Original (Big card) */}
-        {visibleOriginals.length > 0 && (
-          <div className="mb-8">
-            <NewsCard article={visibleOriginals[0]} onHide={hideArticle} featured />
-          </div>
-        )}
+          {/* Big Featured Article */}
+          {featured && (
+            <NewsCard article={featured} onHide={hideArticle} featured />
+          )}
 
-        {/* Compact Originals Grid */}
-        {visibleOriginals.length > 1 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {visibleOriginals.slice(1).map(article => (
-              <NewsCard key={article.link} article={article} onHide={hideArticle} compact />
+          {/* Other Original Headlines - Vertical List */}
+          {otherOriginals.length > 0 && (
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+              <h3 className="font-semibold text-lg mb-5 text-amber-400">More Augly Originals</h3>
+              <div className="space-y-6">
+                {otherOriginals.map(article => (
+                  <a 
+                    key={article.link}
+                    href={article.link} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="block group"
+                  >
+                    <h4 className="font-medium leading-tight text-lg group-hover:text-blue-400 transition-colors line-clamp-2">
+                      {article.title}
+                    </h4>
+                    <p className="text-xs text-gray-500 mt-2">
+                      {article.category} • {new Date(article.pubDate).toLocaleDateString()}
+                    </p>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* RIGHT COLUMN - Latest News */}
+        <div className="lg:col-span-7">
+          <h2 className="text-3xl font-bold mb-6">Latest News</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {visibleRSS.map(article => (
+              <NewsCard 
+                key={article.link} 
+                article={article} 
+                onHide={hideArticle} 
+              />
             ))}
           </div>
-        )}
-      </div>
-
-      {/* === REGULAR NEWS FEED === */}
-      <div>
-        <h2 className="text-3xl font-bold mb-6">Latest News</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {visibleRSS.map(article => (
-            <NewsCard key={article.link} article={article} onHide={hideArticle} />
-          ))}
         </div>
       </div>
     </div>
