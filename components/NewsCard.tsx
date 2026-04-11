@@ -31,24 +31,22 @@ export default function NewsCard({
         href={article.link} 
         target="_blank" 
         rel="noopener noreferrer"
-        className="block py-4 border-b border-gray-800 hover:bg-gray-900 px-2 -mx-2 rounded-xl group"
+        className="block py-5 border-b border-gray-800 hover:bg-gray-900 px-2 -mx-2 rounded-xl group transition-colors"
       >
-        <div className="flex justify-between items-start gap-4">
-          <h4 className="font-medium text-base leading-tight line-clamp-2 group-hover:text-blue-400 transition-colors flex-1">
-            {article.title}
-          </h4>
-          <div className="text-xs text-gray-500 whitespace-nowrap pt-1">
-            {article.source}
-          </div>
+        <h4 className="font-medium text-[17px] leading-tight line-clamp-2 group-hover:text-blue-400 transition-colors">
+          {article.title}
+        </h4>
+        
+        <div className="flex items-center gap-3 text-xs text-gray-500 mt-3">
+          <span>{article.source}</span>
+          <span>•</span>
+          <span>{format(new Date(article.pubDate), 'MMM d, yyyy')}</span>
         </div>
-        <p className="text-xs text-gray-500 mt-1">
-          {format(new Date(article.pubDate), 'MMM d')}
-        </p>
       </a>
     );
   }
 
-  // Normal / Featured Card
+  // Normal / Featured Card (unchanged)
   return (
     <div className={`relative rounded-2xl overflow-hidden border group transition-all
       ${featured 
