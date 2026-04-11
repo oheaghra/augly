@@ -15,21 +15,46 @@ const categoryColors: Record<string, string> = {
 export default function NewsCard({ 
   article, 
   onHide,
-  featured = false
+  featured = false,
+  headlineOnly = false
 }: { 
   article: Article; 
   onHide: (link: string) => void;
   featured?: boolean;
+  headlineOnly?: boolean;
 }) {
   const isOriginal = article.source === "Augly Original";
 
+  if (headlineOnly) {
+    return (
+      <a 
+        href={article.link} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="block py-4 border-b border-gray-800 hover:bg-gray-900 px-2 -mx-2 rounded-xl group"
+      >
+        <div className="flex justify-between items-start gap-4">
+          <h4 className="font-medium text-base leading-tight line-clamp-2 group-hover:text-blue-400 transition-colors flex-1">
+            {article.title}
+          </h4>
+          <div className="text-xs text-gray-500 whitespace-nowrap pt-1">
+            {article.source}
+          </div>
+        </div>
+        <p className="text-xs text-gray-500 mt-1">
+          {format(new Date(article.pubDate), 'MMM d')}
+        </p>
+      </a>
+    );
+  }
+
+  // Normal / Featured Card
   return (
     <div className={`relative rounded-2xl overflow-hidden border group transition-all
       ${featured 
         ? 'border-amber-500 ring-1 ring-amber-500/30 bg-gradient-to-br from-gray-900 to-black' 
         : 'bg-gray-900 border-gray-800 hover:border-gray-700'}`}>
 
-      {/* Hide Button */}
       <button
         onClick={(e) => { e.preventDefault(); onHide(article.link); }}
         className="absolute top-4 right-4 z-20 bg-black/70 hover:bg-black text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all"

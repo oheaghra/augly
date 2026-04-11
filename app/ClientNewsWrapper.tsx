@@ -35,7 +35,7 @@ export default function ClientNewsWrapper({
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-8">
-      {/* Search */}
+      {/* Search Bar */}
       <div className="max-w-2xl mx-auto mb-10">
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -49,15 +49,15 @@ export default function ClientNewsWrapper({
         </div>
       </div>
 
-      {/* Main Grid - All columns same width */}
+      {/* Main Content Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {visibleArticles.map(article => (
+        {visibleArticles.map((article, index) => (
           <NewsCard 
             key={article.link} 
             article={article} 
             onHide={hideArticle}
-            featured={article.source === "Augly Original" && 
-                     visibleArticles.indexOf(article) === 0}
+            featured={article.source === "Augly Original" && index === 0}
+            headlineOnly={index >= 9}     // ← After 9 cards, show only headlines
           />
         ))}
       </div>
