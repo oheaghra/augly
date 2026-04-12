@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import NewsCard from '../components/NewsCard';
 import { Article } from '../types';
 import { Search } from 'lucide-react';
-import { isPromoted } from '../data/promotedArticles';
+import { isGloballyHidden, addToHidden } from '../data/hiddenArticles';
 
 export default function ClientNewsWrapper({
   originalArticles,
@@ -14,35 +14,29 @@ export default function ClientNewsWrapper({
   originalArticles: Article[];
   rssArticles: Article[];
 }) {
-  const [hiddenArticles, setHiddenArticles] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
 
+  // Simple admin check (you can change the password later)
   useEffect(() => {
-    const saved = localStorage.getItem('hiddenArticles');
-    if (saved) setHiddenArticles(JSON.parse(saved));
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('admin') === 'true') {
+      setIsAdmin(true);
+    }
   }, []);
-
-  const hideArticle = (link: string) => {
-    const newHidden = [...hiddenArticles, link];
-    setHiddenArticles(newHidden);
-    localStorage.setItem('hiddenArticles', JSON.stringify(newHidden));
-  };
 
   const allArticles = [...originalArticles, ...rssArticles];
 
-  // Sort: Promoted + Originals first, then the rest
-  const sortedArticles = [...allArticles].sort((a, b) => {
-    const aPromoted = isPromoted(a.link) || a.source === "Augly Original";
-    const bPromoted = isPromoted(b.link) || b.source === "Augly Original";
-    
-    if (aPromoted && !bPromoted) return -1;
-    if (!aPromoted && bPromoted) return 1;
-    return 0;
-  });
-
-  const visibleArticles = sortedArticles.filter(article => 
-    !hiddenArticles.includes(article.link)
+  const visibleArticles = allArticles.filter(article => 
+    !isGloballyHidden(article.link)
   );
+
+  const hideGlobally = (link: string) => {
+    if (confirm("Hide this article for ALL visitors?")) {
+      addToHidden(link);
+      window.location.reload(); // refresh to show change
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-8">
@@ -64,9 +58,10 @@ export default function ClientNewsWrapper({
           <NewsCard 
             key={article.link} 
             article={article} 
-            onHide={hideArticle}
             featured={article.source === "Augly Original" && index === 0}
-            headlineOnly={index >= 9}           // First 9 = full cards
+            headlineOnly={index >= 9}
+            isAdmin={isAdmin}
+            onHide={hideGlobally}
           />
         ))}
       </div>

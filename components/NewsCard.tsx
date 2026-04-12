@@ -16,12 +16,14 @@ export default function NewsCard({
   article, 
   onHide,
   featured = false,
-  headlineOnly = false
+  headlineOnly = false,
+  isAdmin = false
 }: { 
   article: Article; 
   onHide: (link: string) => void;
   featured?: boolean;
   headlineOnly?: boolean;
+  isAdmin?: boolean;
 }) {
   const isOriginal = article.source === "Augly Original";
 
@@ -33,32 +35,42 @@ export default function NewsCard({
         rel="noopener noreferrer"
         className="block py-5 border-b border-gray-800 hover:bg-gray-900 px-2 -mx-2 rounded-xl group transition-colors"
       >
-        <h4 className="font-medium text-[17px] leading-tight line-clamp-2 group-hover:text-blue-400 transition-colors">
-          {article.title}
-        </h4>
-        
-        <div className="flex items-center gap-3 text-xs text-gray-500 mt-3">
-          <span>{article.source}</span>
-          <span>•</span>
-          <span>{format(new Date(article.pubDate), 'MMM d, yyyy')}</span>
+        <div className="flex justify-between items-start gap-4">
+          <h4 className="font-medium text-[17px] leading-tight line-clamp-2 group-hover:text-blue-400 transition-colors flex-1">
+            {article.title}
+          </h4>
+          {isAdmin && (
+            <button
+              onClick={(e) => { e.preventDefault(); onHide(article.link); }}
+              className="text-red-500 hover:text-red-600 text-xs opacity-0 group-hover:opacity-100"
+            >
+              Hide
+            </button>
+          )}
         </div>
+        <p className="text-xs text-gray-500 mt-2">
+          {article.source} • {format(new Date(article.pubDate), 'MMM d, yyyy')}
+        </p>
       </a>
     );
   }
 
-  // Normal / Featured Card (unchanged)
+  // Normal / Featured Card
   return (
     <div className={`relative rounded-2xl overflow-hidden border group transition-all
       ${featured 
         ? 'border-amber-500 ring-1 ring-amber-500/30 bg-gradient-to-br from-gray-900 to-black' 
         : 'bg-gray-900 border-gray-800 hover:border-gray-700'}`}>
 
-      <button
-        onClick={(e) => { e.preventDefault(); onHide(article.link); }}
-        className="absolute top-4 right-4 z-20 bg-black/70 hover:bg-black text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all"
-      >
-        <X className="w-4 h-4" />
-      </button>
+      {/* Admin Global Hide Button */}
+      {isAdmin && (
+        <button
+          onClick={(e) => { e.preventDefault(); onHide(article.link); }}
+          className="absolute top-4 right-4 z-30 bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 rounded-full transition-all"
+        >
+          Hide Globally
+        </button>
+      )}
 
       <a href={article.link} target="_blank" rel="noopener noreferrer" className="block h-full">
         {article.image && (
