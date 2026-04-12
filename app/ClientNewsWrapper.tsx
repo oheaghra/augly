@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import NewsCard from '../components/NewsCard';
 import { Article } from '../types';
 import { Search } from 'lucide-react';
-import { isGloballyHidden } from '../data/hiddenArticles';
+import { isGloballyHidden, addToHidden } from '../data/hiddenArticles';
 import { isFeatured, promoteToTop, removeFromTop } from '../data/featuredArticles';
 
 export default function ClientNewsWrapper({
@@ -31,7 +31,6 @@ export default function ClientNewsWrapper({
     !isGloballyHidden(article.link)
   );
 
-  // Sort: Featured articles first, then the rest
   const sortedArticles = [...visibleArticles].sort((a, b) => {
     const aFeatured = isFeatured(a.link);
     const bFeatured = isFeatured(b.link);
@@ -42,15 +41,22 @@ export default function ClientNewsWrapper({
 
   const handlePromote = (link: string) => {
     if (isFeatured(link)) {
-      if (confirm("Remove this article from the top full-size section?")) {
+      if (confirm("Remove from Top Full-Size section?")) {
         removeFromTop(link);
         window.location.reload();
       }
     } else {
-      if (confirm("Promote this article to the top full-size section?")) {
+      if (confirm("Promote this article to Top Full-Size section?")) {
         promoteToTop(link);
         window.location.reload();
       }
+    }
+  };
+
+  const handleHide = (link: string) => {
+    if (confirm("Hide this article for ALL visitors? This cannot be easily undone.")) {
+      addToHidden(link);
+      window.location.reload();
     }
   };
 
@@ -77,12 +83,7 @@ export default function ClientNewsWrapper({
             featured={isFeatured(article.link) || (article.source === "Augly Original" && index === 0)}
             headlineOnly={index >= 9}
             isAdmin={isAdmin}
-            onHide={(link) => {
-              if (confirm("Hide this article for everyone?")) {
-                // Note: Global hide logic will be added in hiddenArticles.ts
-                window.location.reload();
-              }
-            }}
+            onHide={handleHide}
             onPromote={handlePromote}
           />
         ))}

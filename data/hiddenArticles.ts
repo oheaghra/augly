@@ -1,7 +1,7 @@
 // data/hiddenArticles.ts
 
 export const globallyHiddenLinks = new Set<string>([
-  // Add links here when you want to hide them from everyone
+  // Add links here to hide them globally
 ]);
 
 export function isGloballyHidden(link: string): boolean {
