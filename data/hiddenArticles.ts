@@ -1,7 +1,7 @@
 // data/hiddenArticles.ts
 
 export const globallyHiddenLinks = new Set<string>([
-  // Add links here to hide them globally
+  https://theaugustapress.com/the-retro-store-consignment-shop-for-sneakerheads-hosts-grand-opening-of-augusta-location/
 ]);
 
 export function isGloballyHidden(link: string): boolean {
