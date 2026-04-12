@@ -1,7 +1,11 @@
 // data/featuredArticles.ts
 
+// Add full article URLs here to promote them to the top full-size section
 export const featuredLinks = new Set<string>([
-  // Articles here will be moved to the top full-size section
+  // Example:
+  // "https://theaugustapress.com/some-article-title/",
+  
+  // ← Paste your promoted links here (with quotes)
 ]);
 
 export function isFeatured(link: string): boolean {
