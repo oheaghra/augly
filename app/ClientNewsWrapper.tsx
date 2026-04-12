@@ -5,7 +5,8 @@ import { useState, useEffect } from 'react';
 import NewsCard from '../components/NewsCard';
 import { Article } from '../types';
 import { Search } from 'lucide-react';
-import { isGloballyHidden, addToHidden } from '../data/hiddenArticles';
+import { isGloballyHidden } from '../data/hiddenArticles';
+import { isFeatured, promoteToTop, removeFromTop } from '../data/featuredArticles';
 
 export default function ClientNewsWrapper({
   originalArticles,
@@ -17,7 +18,6 @@ export default function ClientNewsWrapper({
   const [searchTerm, setSearchTerm] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // Simple admin check (you can change the password later)
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('admin') === 'true') {
@@ -31,10 +31,26 @@ export default function ClientNewsWrapper({
     !isGloballyHidden(article.link)
   );
 
-  const hideGlobally = (link: string) => {
-    if (confirm("Hide this article for ALL visitors?")) {
-      addToHidden(link);
-      window.location.reload(); // refresh to show change
+  // Sort: Featured articles first, then the rest
+  const sortedArticles = [...visibleArticles].sort((a, b) => {
+    const aFeatured = isFeatured(a.link);
+    const bFeatured = isFeatured(b.link);
+    if (aFeatured && !bFeatured) return -1;
+    if (!aFeatured && bFeatured) return 1;
+    return 0;
+  });
+
+  const handlePromote = (link: string) => {
+    if (isFeatured(link)) {
+      if (confirm("Remove this article from the top full-size section?")) {
+        removeFromTop(link);
+        window.location.reload();
+      }
+    } else {
+      if (confirm("Promote this article to the top full-size section?")) {
+        promoteToTop(link);
+        window.location.reload();
+      }
     }
   };
 
@@ -54,14 +70,20 @@ export default function ClientNewsWrapper({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {visibleArticles.map((article, index) => (
+        {sortedArticles.map((article, index) => (
           <NewsCard 
             key={article.link} 
             article={article} 
-            featured={article.source === "Augly Original" && index === 0}
+            featured={isFeatured(article.link) || (article.source === "Augly Original" && index === 0)}
             headlineOnly={index >= 9}
             isAdmin={isAdmin}
-            onHide={hideGlobally}
+            onHide={(link) => {
+              if (confirm("Hide this article for everyone?")) {
+                // Note: Global hide logic will be added in hiddenArticles.ts
+                window.location.reload();
+              }
+            }}
+            onPromote={handlePromote}
           />
         ))}
       </div>

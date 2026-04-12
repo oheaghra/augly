@@ -1,5 +1,5 @@
 // components/NewsCard.tsx
-import { Calendar, ExternalLink, X } from 'lucide-react';
+import { Calendar, ExternalLink, X, Star } from 'lucide-react';
 import { format } from 'date-fns';
 import { Article } from '../types';
 
@@ -17,13 +17,15 @@ export default function NewsCard({
   onHide,
   featured = false,
   headlineOnly = false,
-  isAdmin = false
+  isAdmin = false,
+  onPromote
 }: { 
   article: Article; 
   onHide: (link: string) => void;
   featured?: boolean;
   headlineOnly?: boolean;
   isAdmin?: boolean;
+  onPromote?: (link: string) => void;
 }) {
   const isOriginal = article.source === "Augly Original";
 
@@ -40,12 +42,20 @@ export default function NewsCard({
             {article.title}
           </h4>
           {isAdmin && (
-            <button
-              onClick={(e) => { e.preventDefault(); onHide(article.link); }}
-              className="text-red-500 hover:text-red-600 text-xs opacity-0 group-hover:opacity-100"
-            >
-              Hide
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={(e) => { e.preventDefault(); onPromote?.(article.link); }}
+                className="text-amber-500 hover:text-amber-400 text-xs opacity-0 group-hover:opacity-100"
+              >
+                <Star className="w-4 h-4" />
+              </button>
+              <button
+                onClick={(e) => { e.preventDefault(); onHide(article.link); }}
+                className="text-red-500 hover:text-red-600 text-xs opacity-0 group-hover:opacity-100"
+              >
+                Hide
+              </button>
+            </div>
           )}
         </div>
         <p className="text-xs text-gray-500 mt-2">
@@ -55,21 +65,28 @@ export default function NewsCard({
     );
   }
 
-  // Normal / Featured Card
+  // Regular & Featured Cards
   return (
     <div className={`relative rounded-2xl overflow-hidden border group transition-all
       ${featured 
         ? 'border-amber-500 ring-1 ring-amber-500/30 bg-gradient-to-br from-gray-900 to-black' 
         : 'bg-gray-900 border-gray-800 hover:border-gray-700'}`}>
 
-      {/* Admin Global Hide Button */}
       {isAdmin && (
-        <button
-          onClick={(e) => { e.preventDefault(); onHide(article.link); }}
-          className="absolute top-4 right-4 z-30 bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 rounded-full transition-all"
-        >
-          Hide Globally
-        </button>
+        <div className="absolute top-4 right-4 z-30 flex gap-2">
+          <button
+            onClick={(e) => { e.preventDefault(); onPromote?.(article.link); }}
+            className="bg-amber-600 hover:bg-amber-500 text-white text-xs px-3 py-1 rounded-full flex items-center gap-1 transition-all"
+          >
+            <Star className="w-3 h-3" /> Promote
+          </button>
+          <button
+            onClick={(e) => { e.preventDefault(); onHide(article.link); }}
+            className="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 rounded-full transition-all"
+          >
+            Hide
+          </button>
+        </div>
       )}
 
       <a href={article.link} target="_blank" rel="noopener noreferrer" className="block h-full">
