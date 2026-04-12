@@ -2,7 +2,7 @@
 
 export const globallyHiddenLinks = new Set<string>([
   "https://theaugustapress.com/the-retro-store-consignment-shop-for-sneakerheads-hosts-grand-opening-of-augusta-location/",
-  // Add more links below, one per line, with quotes
+  "https://theaugustapress.com/taylors-trio-moving-day-has-a-lot-of-moving-parts-at-the-masters-tournament/",
 ]);
 
 export function isGloballyHidden(link: string): boolean {
