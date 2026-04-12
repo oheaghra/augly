@@ -4,7 +4,7 @@
 export const featuredLinks = new Set<string>([
   // Example:
   "https://www.wjbf.com/news/crime-news/child-murder-suspect-apprehended-after-hours-long-standoff-rcso-says/",
-  
+  "https://theaugustapress.com/beating-death-of-hephzibah-girl-leads-to-midnight-pursuit-and-swat-standoff-in-augusta/",
   // ← Paste your promoted links here (with quotes)
 ]);
 
